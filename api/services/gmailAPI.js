@@ -1,8 +1,9 @@
 const fs = require('fs').promises;
 const path = require('path');
-const process = require('process');
 const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
+const { convert } = require('html-to-text');
+const log = require('../../helpers/logger');
 
 module.exports = class GmailApi {
 	constructor(emailPrefix) {
@@ -47,8 +48,6 @@ module.exports = class GmailApi {
 			refresh_token: client.credentials.refresh_token,
 		});
 
-		console.log(this.TOKEN_PATH);
-
 		await fs.writeFile(this.TOKEN_PATH, payload);
 	};
 
@@ -72,18 +71,88 @@ module.exports = class GmailApi {
 		return client;
 	};
 
-	searchEmailId = async (query = 'notice@pnclassaction.com') => {
+	/**
+	 * Search gmail inbox
+	 *
+	 * @param query as a string: settlement's sender
+	 * @return array of email ids
+	 */
+	prepaid_SearchEmailId = async (senderAddress) => {
 		const gmail = google.gmail({ version: 'v1', auth: await this.accessToken });
+
+		const query = `from:${senderAddress}`;
 
 		const res = await gmail.users.messages.list({
 			userId: 'me',
 			q: query,
-			maxResults: 5,
 		});
-		const msgId = res.data.messages[0].id;
 
-		console.log(msgId);
+		// const messageIdsArray = res.data.messages[0].id;
+		const messageIdsArray = res.data.messages;
 
-		return msgId;
+		return messageIdsArray;
+
+		// return [{ id: '1837b02a9734ba90' }];
+	};
+
+	/**
+	 * Retrieve codes from email body
+	 *
+	 * @param emailIds array of email's id
+	 * @return array of code???
+	 */
+	prepaid_GetEmailContent = async (emailIds) => {
+		log.init(`Searching Inbox`);
+
+		const gmail = google.gmail({ version: 'v1', auth: await this.accessToken });
+
+		const emailCodeArr = [];
+
+		for (let i = 0; i < emailIds.length; i++) {
+			// Search inbox based on message ID
+			const messageBody = await gmail.users.messages.get({
+				userId: 'me',
+				id: emailIds[i].id,
+			});
+
+			const messagePayload = messageBody.data.payload;
+
+			const mimeType = messagePayload.mimeType;
+
+			if (mimeType === 'text/html') {
+				const emailReceiver =
+					messagePayload.headers[messagePayload.headers.length - 2].value;
+				const encodedMessage = await messagePayload.body.data;
+
+				const decodedStr = Buffer.from(encodedMessage, 'base64').toString(
+					'ascii'
+				);
+
+				const text = convert(decodedStr, {
+					wordwrap: 130,
+				});
+
+				// Extract redemption code from email body text
+				const redemptionCode = text.match(/(?<=\bcode:\s)(\w+)/g)[0];
+
+				const emailCodeMap = {};
+
+				emailCodeMap.email = emailReceiver;
+				emailCodeMap.code = redemptionCode;
+				emailCodeMap.url = `https://www.myprepaidcenter.com/redeem?ecode=${redemptionCode}`;
+
+				emailCodeArr.push(emailCodeMap);
+
+				log.status(`Retrieved -> ${emailReceiver} -> ${redemptionCode}`);
+			}
+
+			// For mimeType: 'multipart/alternative'
+			//const encodedMessage = await message.payload["parts"][0].body.data;
+			// const decodedStr = Buffer.from(encodedMessage, "base64").toString("ascii");
+		}
+
+		log.success(`Finished Searching Redeem Codes`);
+
+		return emailCodeArr;
 	};
 };
