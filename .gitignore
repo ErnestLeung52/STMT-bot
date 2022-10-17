@@ -1,3 +1,4 @@
 node_modules
-accounts
-outputLogs/codes.csv
+config/accounts/*
+config/proxies/*
+logs/codes.csv
