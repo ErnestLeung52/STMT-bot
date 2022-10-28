@@ -16,3 +16,9 @@
 ## Gmail API
 
 - REST documentation and testing <br/> https://developers.google.com/gmail/api/reference/rest/
+
+## Puppeteer
+
+- When you run page.$$, you get back an array of ElementHandle. From Puppeteer's documentation: <br/> https://devdocs.io/puppeteer/index#class-elementhandle
+
+- This means you can iterate over them, but you also have to run evaluate() or $eval() over each element to access the DOM element.
