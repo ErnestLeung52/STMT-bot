@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { convertProxies, convertProfileToJSON } = require('./csvWriter');
+const { convertProxies, convertProfileToJSON } = require('./fileConverter');
 
 const rootDir = require('path').resolve('./');
 
