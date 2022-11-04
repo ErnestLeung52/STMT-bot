@@ -1,4 +1,5 @@
-const NewBrowser = require('./src/utils/Browser');
+const snapChatSciprt = require('./src/scripts/sites/snap110522');
+const NewBrowser = require('./src/utils/pptrBrowser');
 const readJsonFile = require('./src/utils/readJson');
 
 // Import profile.csv, proxy.json, Puppeteer Browser
@@ -13,17 +14,16 @@ Import Profile - loop each profile
 
 const profilesFile = 'testProfile';
 const proxiesFile = 'proxies';
+const catchAll = 'ernestfrwd01@gmail.com';
 
 const runScript = async () => {
 	const profiles = await readJsonFile(profilesFile);
 	const proxies = await readJsonFile(proxiesFile);
 
-	for (let i = 0; i < profile.length; i++) {
+	for (let i = 0; i < profiles.length; i++) {
 		const instance = new NewBrowser();
-		// instance.options.args.push(`--proxy-server=${'13.56.157.185:3128'}`);
-		await instance.createBrowser();
-		const page = await instance.browser.newPage();
-		snap110522(page, profiles);
+
+		await snapChatSciprt(instance, profiles[i], proxies[i], catchAll);
 	}
 };
 
