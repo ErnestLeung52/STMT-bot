@@ -6,3 +6,5 @@ const {
 const proxies = require('../../utils/proxies');
 
 // website
+
+const fairlifeURL = 'https://www.fairlifemilksettlement.com/en/Claim';
