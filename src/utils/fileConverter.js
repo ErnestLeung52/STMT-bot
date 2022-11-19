@@ -27,7 +27,10 @@ const appendToCSV = async (data, outputFileName) => {
 	// 	throw 'Unrecognizable file path!!!';
 	// }
 
-	outputFilePath = path.resolve(rootDir, `./logs/${outputFileName}`);
+	outputFilePath = path.resolve(
+		rootDir,
+		`./logs/redeemCodes/${outputFileName}.csv`
+	);
 
 	const options = {
 		headers: true,
