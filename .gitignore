@@ -2,4 +2,4 @@ node_modules
 config/accounts/*
 config/profiles/*
 config/proxies/*
-logs/codes.csv
+logs
