@@ -1,11 +1,14 @@
 const GmailApi = require('../src/api/services/gmailAPI');
-const company = require('../config/settlement/index');
+const companies = require('../config/settlement/index');
+const { appendToCSV } = require('../src/utils/fileConverter');
 
 /************* Manual Input *************/
 const emailAddress = 'ernestfrwd01';
-const settlement = company.NEON;
+const company = 'NEON';
 
 const retrieveCodes = async () => {
+	const settlement = companies[company];
+
 	// Initialize gmail client API
 	const gmailClient = new GmailApi(emailAddress);
 
@@ -18,7 +21,7 @@ const retrieveCodes = async () => {
 		settlement
 	);
 
-	console.log(redeemCodes);
+	appendToCSV(redeemCodes, emailAddress + `_${company}`);
 };
 
 retrieveCodes();
