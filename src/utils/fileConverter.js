@@ -108,16 +108,20 @@ const convertProfileToJSON = async (fileName) => {
 		parseStream(readStream, { headers: true })
 			.on('data', (row) => {
 				const profile = {};
+				const detail = {};
 
-				profile.firstName = row['FirstName'];
-				profile.lastName = row['LastName'];
-				profile.email = row['Email'];
-				profile.phone = row['Phone'];
-				profile.address = row['Address'];
-				profile.state = row['State'];
-				profile.city = row['City'];
-				profile.zip = row['Zip'];
-				profile.country = row['Country'];
+				detail.firstName = row['FirstName'];
+				detail.lastName = row['LastName'];
+				detail.fullname = row['FirstName'] + ' ' + row['LastName'];
+				detail.email = row['Email'];
+				detail.phone = row['Phone'];
+				detail.address = row['Address'];
+				detail.state = row['State'];
+				detail.city = row['City'];
+				detail.zip = row['Zip'];
+				detail.country = row['Country'];
+
+				profile[row['Email']] = detail;
 
 				profilesArr.push(profile);
 			})
