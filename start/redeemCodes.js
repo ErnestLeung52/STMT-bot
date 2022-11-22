@@ -1,3 +1,4 @@
+const rootDir = require('path').resolve('./');
 const { convertProfileToJSON } = require('../src/utils/fileConverter');
 
 /*
@@ -14,3 +15,9 @@ const { convertProfileToJSON } = require('../src/utils/fileConverter');
 4. Extract card info from website
 */
 
+const fileName = 'ernestfrwd01';
+const settlement = 'NEON';
+
+const redeemCodes = async () => {
+  
+}
