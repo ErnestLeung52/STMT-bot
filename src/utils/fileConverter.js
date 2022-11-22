@@ -126,7 +126,7 @@ const convertProfileToJSON = async (fileName) => {
 				profilesArr.push(profile);
 			})
 			.on('end', () => {
-				const jsonProfiles = JSON.stringify(profilesArr);
+				const jsonProfiles = JSON.stringify(profilesArr, null, 2);
 				fs.writeFileSync(outputFilePath, jsonProfiles);
 				resolve();
 			});
@@ -152,6 +152,21 @@ const convertProxies = async (fileName) => {
 				resolve(outputArr);
 			});
 		});
+	});
+};
+
+const convertCodestoJSON = async (fileName, settlement) => {
+	const codesFolderPath = path.resolve(rootDir, './logs/redeemCodes');
+	const inputPath = path.join(codesFolderPath, `${fileName}_${settlement}.csv`);
+	const outputPath = path.join(
+		codesFolderPath,
+		`${fileName}_${settlement}.json`
+	);
+
+	const readStream = fs.createReadStream(inputPath);
+
+	return new Promise((resolve, reject) => {
+		parseStream(readStream, { headers: true }).on((data) => {});
 	});
 };
 
