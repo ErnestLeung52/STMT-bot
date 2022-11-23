@@ -19,5 +19,5 @@ const fileName = 'ernestfrwd01';
 const settlement = 'NEON';
 
 const redeemCodes = async () => {
-  
+  //
 }
